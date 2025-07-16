@@ -41,29 +41,72 @@ class GitHubPRAutoFill {
     const url = window.location.href;
     this.isComparePage = url.includes("/compare/") || url.includes("/pull/new");
 
-    // Also check if there's a PR description textarea
-    const prDescriptionField = document.querySelector('textarea[name="pull_request[body]"]') as HTMLTextAreaElement;
+    // Also check if there's a PR description textarea (try multiple selectors)
+    const prDescriptionField =
+      (document.querySelector('textarea[name="pull_request[body]"]') as HTMLTextAreaElement) ||
+      (document.querySelector('textarea[data-testid="pull-request-body"]') as HTMLTextAreaElement) ||
+      (document.querySelector('textarea[placeholder*="description"]') as HTMLTextAreaElement) ||
+      (document.querySelector('textarea[aria-label*="description"]') as HTMLTextAreaElement);
+
     if (prDescriptionField) {
       this.isComparePage = true;
+      console.log("PullCraft: PR description field found, setting up UI");
     }
+
+    console.log("PullCraft: Page detection -", {
+      url,
+      isComparePage: this.isComparePage,
+      foundTextField: !!prDescriptionField
+    });
   }
 
   private setupAutoFillUI() {
     if (this.hasInjectedUI) return;
 
-    // Wait for the page to fully load
-    setTimeout(() => {
-      this.injectFloatingButton();
-      this.hasInjectedUI = true;
-    }, 1000);
+    // Try to inject immediately
+    this.injectFloatingButton();
+
+    // Also try after delays to catch late-loading elements
+    setTimeout(() => this.injectFloatingButton(), 1000);
+    setTimeout(() => this.injectFloatingButton(), 3000);
+    setTimeout(() => this.injectFloatingButton(), 5000);
+
+    this.hasInjectedUI = true;
   }
 
   private injectFloatingButton() {
-    const prDescriptionField = document.querySelector('textarea[name="pull_request[body]"]') as HTMLTextAreaElement;
-    if (!prDescriptionField) return;
+    // Try multiple selectors to find the PR description field
+    const prDescriptionField =
+      (document.querySelector('textarea[name="pull_request[body]"]') as HTMLTextAreaElement) ||
+      (document.querySelector('textarea[data-testid="pull-request-body"]') as HTMLTextAreaElement) ||
+      (document.querySelector('textarea[placeholder*="description"]') as HTMLTextAreaElement) ||
+      (document.querySelector('textarea[aria-label*="description"]') as HTMLTextAreaElement);
+
+    console.log("PullCraft: Attempting to inject button...", {
+      foundField: !!prDescriptionField,
+      url: window.location.href
+    });
+
+    if (!prDescriptionField) {
+      console.log("PullCraft: No PR description field found, checking if we should show button anyway...");
+
+      // If we're on a compare or PR page, show the button anyway
+      const url = window.location.href;
+      const isDefinitelyComparePage = url.includes("/compare/") || url.includes("/pull/new") || url.includes("/pull/");
+
+      if (!isDefinitelyComparePage) {
+        console.log("PullCraft: Not on a PR page, skipping injection");
+        return;
+      }
+
+      console.log("PullCraft: On PR page but no field found yet, injecting button anyway");
+    }
 
     // Check if button already exists
-    if (document.querySelector(".pr-autofill-floating-button")) return;
+    if (document.querySelector(".pr-autofill-floating-button")) {
+      console.log("PullCraft: Button already exists, skipping injection");
+      return;
+    }
 
     // Create floating container
     const floatingContainer = document.createElement("div");
@@ -80,7 +123,6 @@ class GitHubPRAutoFill {
     const autoFillButton = document.createElement("button");
     autoFillButton.type = "button";
     autoFillButton.className = "pr-autofill-btn";
-    this.updateButtonState("idle");
 
     autoFillButton.style.cssText = `
       display: inline-flex;
@@ -101,6 +143,15 @@ class GitHubPRAutoFill {
       min-width: 140px;
       height: 44px;
     `;
+
+    // Set initial button content
+    autoFillButton.innerHTML = `
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+      </svg>
+      AI Auto-fill
+    `;
+    autoFillButton.title = "Generate PR description using AI based on your changes";
 
     // Add hover and focus effects
     autoFillButton.addEventListener("mouseenter", () => {
@@ -123,6 +174,9 @@ class GitHubPRAutoFill {
     floatingContainer.appendChild(autoFillButton);
     document.body.appendChild(floatingContainer);
     this.floatingButton = autoFillButton;
+    this.currentState = "idle";
+
+    console.log("PullCraft: Floating button successfully injected!");
   }
 
   private updateButtonState(state: "idle" | "loading" | "success" | "error", errorMessage?: string) {

@@ -26,7 +26,8 @@
     {
       "matches": [
         "https://github.com/*/compare/*",
-        "https://github.com/*/pull/new/*"
+        "https://github.com/*/pull/new/*",
+        "https://github.com/*/pull/*"
       ],
       "js": [
         "dist/content.bundle.js"
