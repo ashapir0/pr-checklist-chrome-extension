@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "PR Checklist Bot",
   "description": "Automatically fills out PR checklist items based on the content of the PR.",
-  "version": "0.0.0",
+  "version": "0.0.1",
   "incognito": "spanning",
   "minimum_chrome_version": "93",
   "icons": {
@@ -24,8 +24,13 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://github.com/*/compare/*", "https://github.com/*/pull/new/*"],
-      "js": ["dist/content.bundle.js"],
+      "matches": [
+        "https://github.com/*/compare/*",
+        "https://github.com/*/pull/new/*"
+      ],
+      "js": [
+        "dist/content.bundle.js"
+      ],
       "run_at": "document_end"
     }
   ],
