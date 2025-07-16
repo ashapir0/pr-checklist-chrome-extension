@@ -1,0 +1,67 @@
+name: Build & Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  Release:
+    runs-on: ubuntu-latest
+    if: "contains(github.event.head_commit.message, 'chore(release)')"
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v2-beta
+        with:
+          node-version: 24
+      - name: Extract Version
+        id: version
+        uses: ashapir0/npm-get-version-action@main
+      - name: Build
+        run: |
+          npm clean-install
+          npm run build
+          zip -r pr-checklist-chrome-extension.zip images dist manifest.json package.json package-lock.json README.md
+      - name: Prepare Changelog
+        run: |
+          head -15 CHANGELOG.md > SHORT_CHANGELOG.md
+          echo "..." >> SHORT_CHANGELOG.md
+          echo "[Read More](https://github.com/ashapir0/pr-checklist-chrome-extension/blob/main/CHANGELOG.md)." >> SHORT_CHANGELOG.md
+      - name: Create Release
+        id: release
+        uses: actions/create-release@v1
+        with:
+          draft: false
+          prerelease: false
+          release_name: ${{ steps.version.outputs.current-version }}
+          tag_name: v${{ steps.version.outputs.current-version }}
+          body_path: SHORT_CHANGELOG.md
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload Build Artifact
+        id: upload
+        uses: actions/upload-release-asset@v1
+        with:
+          asset_name: pr-checklist-chrome-extension.zip
+          asset_path: pr-checklist-chrome-extension.zip
+          asset_content_type: application/zip
+          upload_url: ${{ steps.release.outputs.upload_url }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Bump S3 Version
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.S3_AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.S3_AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: ${{ secrets.S3_AWS_REGION }}
+        run: |
+          BUILD_TIME_EPOCH=$(date +%s)
+          
+          RELEASE_JSON=$(jq -n \
+          --arg ver "${{ steps.version.outputs.current-version }}" \
+          --arg sha "${{ github.sha }}" \
+          --arg dl "${{ steps.upload.outputs.browser_download_url }}" \
+          --arg bt ${BUILD_TIME_EPOCH} \
+          '{version: $ver, sha: $sha, download: $dl, buildTimestamp: $bt }')
+          
+          echo $RELEASE_JSON > release.json          
+          aws s3 cp release.json s3://${{ secrets.S3_AWS_PATH }}/release.json

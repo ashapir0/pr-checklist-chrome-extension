@@ -1,0 +1,59 @@
+{
+  "name": "@ashapir0/pr-checklist-chrome-extension",
+  "version": "0.0.0",
+  "scripts": {
+    "build": "webpack build",
+    "build:w": "webpack build --watch",
+    "lint:commit": "commitlint -E HUSKY_GIT_PARAMS",
+    "lint:code": "lint-staged",
+    "set:version": "HUSKY_SKIP_HOOKS=1 standard-version --no-verify",
+    "pull:tags": "git fetch --all --tags"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.14.0",
+    "@emotion/styled": "^11.14.1",
+    "@mui/material": "^7.2.0",
+    "async-mutex": "^0.5.0",
+    "luxon": "^3.7.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^17.0.0",
+    "@commitlint/config-conventional": "^17.0.0",
+    "@types/chrome": "^0.1.1",
+    "@types/luxon": "^3.6.2",
+    "@types/react": "^17.0.0",
+    "@types/react-dom": "^17.0.0",
+    "copy-webpack-plugin": "^13.0.0",
+    "css-loader": "^7.1.2",
+    "husky": "^4.3.8",
+    "lint-staged": "^16.1.2",
+    "prettier": "^3.6.2",
+    "sass": "^1.89.2",
+    "sass-loader": "^16.0.5",
+    "standard-version": "^9.5.0",
+    "style-loader": "^4.0.0",
+    "ts-loader": "^9.5.2",
+    "typescript": "^5.8.3",
+    "webpack": "^5.100.2",
+    "webpack-cli": "^6.0.1"
+  },
+  "husky": {
+    "hooks": {
+      "commit-msg": "npm run lint:commit",
+      "pre-commit": "npm run lint:code",
+      "post-commit": "npm run pull:tags && npm run set:version"
+    }
+  },
+  "lint-staged": {
+    "*.{ts,tsx,css,md,html}": [
+      "prettier --write"
+    ]
+  },
+  "standard-version": {
+    "skip": {
+      "tag": true
+    }
+  }
+}
