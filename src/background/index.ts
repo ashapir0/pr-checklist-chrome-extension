@@ -3,10 +3,10 @@
  * Handles OpenAI API calls, storage management, and cross-tab communication
  */
 
-import OpenAI from 'openai';
+import OpenAI from "openai";
 
 interface Message {
-  type: 'TEST_API_KEY' | 'GENERATE_PR_DESCRIPTION' | 'GET_SETTINGS';
+  type: "TEST_API_KEY" | "GENERATE_PR_DESCRIPTION" | "GET_SETTINGS";
   data?: any;
 }
 
@@ -27,10 +27,10 @@ class PRChecklistBackground {
   private init() {
     // Load API key from storage on startup
     this.loadApiKey();
-    
+
     // Set up message listeners
     chrome.runtime.onMessage.addListener(this.handleMessage.bind(this));
-    
+
     // Handle installation/update
     chrome.runtime.onInstalled.addListener(this.handleInstall.bind(this));
 
@@ -39,13 +39,13 @@ class PRChecklistBackground {
 
   private async loadApiKey() {
     try {
-      const result = await chrome.storage.sync.get(['openaiApiKey']);
+      const result = await chrome.storage.sync.get(["openaiApiKey"]);
       if (result.openaiApiKey) {
         this.apiKey = result.openaiApiKey;
         this.initializeOpenAI();
       }
     } catch (error) {
-      console.error('Failed to load API key:', error);
+      console.error("Failed to load API key:", error);
     }
   }
 
@@ -58,11 +58,11 @@ class PRChecklistBackground {
   }
 
   private handleInstall(details: chrome.runtime.InstalledDetails) {
-    if (details.reason === 'install') {
-      console.log('PR Checklist Bot installed');
+    if (details.reason === "install") {
+      console.log("PR Checklist Bot installed");
       // Could open onboarding page here
-    } else if (details.reason === 'update') {
-      console.log('PR Checklist Bot updated');
+    } else if (details.reason === "update") {
+      console.log("PR Checklist Bot updated");
     }
   }
 
@@ -71,47 +71,47 @@ class PRChecklistBackground {
     sender: chrome.runtime.MessageSender,
     sendResponse: (response: Response) => void
   ) {
-    console.log('Background script received message:', message.type, message.data ? 'with data' : 'no data');
-    
+    console.log("Background script received message:", message.type, message.data ? "with data" : "no data");
+
     // Handle async operations properly
     (async () => {
       try {
         let response: Response;
 
         switch (message.type) {
-          case 'TEST_API_KEY':
-            console.log('Testing API key...');
+          case "TEST_API_KEY":
+            console.log("Testing API key...");
             response = await this.testApiKey(message.data?.apiKey);
-            console.log('API key test result:', response.success ? 'success' : 'failed');
+            console.log("API key test result:", response.success ? "success" : "failed");
             break;
-          
-          case 'GENERATE_PR_DESCRIPTION':
-            console.log('Generating PR description...');
+
+          case "GENERATE_PR_DESCRIPTION":
+            console.log("Generating PR description...");
             response = await this.generatePRDescription(message.data);
             break;
-          
-          case 'GET_SETTINGS':
-            console.log('Getting settings...');
+
+          case "GET_SETTINGS":
+            console.log("Getting settings...");
             response = await this.getSettings();
             break;
-          
+
           default:
-            console.log('Unknown message type:', message.type);
+            console.log("Unknown message type:", message.type);
             response = {
               success: false,
-              error: 'Unknown message type'
+              error: "Unknown message type"
             };
         }
 
-        console.log('Sending response:', response);
+        console.log("Sending response:", response);
         sendResponse(response);
       } catch (error) {
-        console.error('Background script error:', error);
+        console.error("Background script error:", error);
         const errorResponse = {
           success: false,
-          error: error.message || 'Unknown error occurred'
+          error: error.message || "Unknown error occurred"
         };
-        console.log('Sending error response:', errorResponse);
+        console.log("Sending error response:", errorResponse);
         sendResponse(errorResponse);
       }
     })();
@@ -125,7 +125,7 @@ class PRChecklistBackground {
       if (!keyToTest) {
         return {
           success: false,
-          error: 'No API key provided'
+          error: "No API key provided"
         };
       }
 
@@ -138,14 +138,14 @@ class PRChecklistBackground {
       if (!this.openai) {
         return {
           success: false,
-          error: 'OpenAI client not initialized'
+          error: "OpenAI client not initialized"
         };
       }
 
       // Test with a simple completion
       const completion = await this.openai.chat.completions.create({
-        model: 'gpt-4o-mini',
-        messages: [{ role: 'user', content: 'Say "test"' }],
+        model: "gpt-4o-mini",
+        messages: [{ role: "user", content: 'Say "test"' }],
         max_tokens: 10,
         temperature: 0
       });
@@ -158,11 +158,11 @@ class PRChecklistBackground {
       } else {
         return {
           success: false,
-          error: 'Invalid API response'
+          error: "Invalid API response"
         };
       }
     } catch (error) {
-      console.error('API key test failed:', error);
+      console.error("API key test failed:", error);
       return {
         success: false,
         error: this.getErrorMessage(error)
@@ -170,16 +170,12 @@ class PRChecklistBackground {
     }
   }
 
-  private async generatePRDescription(data: {
-    diff: string;
-    template: string;
-    url: string;
-  }): Promise<Response> {
+  private async generatePRDescription(data: { diff: string; template: string; url: string }): Promise<Response> {
     try {
       if (!this.openai) {
         return {
           success: false,
-          error: 'OpenAI not configured. Please set up your API key in the extension settings.'
+          error: "OpenAI not configured. Please set up your API key in the extension settings."
         };
       }
 
@@ -189,14 +185,15 @@ class PRChecklistBackground {
       const prompt = this.buildPrompt(diff, template, url);
 
       const completion = await this.openai.chat.completions.create({
-        model: 'gpt-4o-mini', // More cost-effective for this use case
+        model: "gpt-4o-mini", // More cost-effective for this use case
         messages: [
           {
-            role: 'system',
-            content: 'You are a helpful assistant that generates professional pull request descriptions based on code changes. You should analyze the provided diff and fill out the PR template appropriately. Be concise but thorough.'
+            role: "system",
+            content:
+              "You are a helpful assistant that generates professional pull request descriptions based on code changes. You should analyze the provided diff and fill out the PR template appropriately. Be concise but thorough."
           },
           {
-            role: 'user',
+            role: "user",
             content: prompt
           }
         ],
@@ -209,7 +206,7 @@ class PRChecklistBackground {
       if (!generatedDescription) {
         return {
           success: false,
-          error: 'No description generated'
+          error: "No description generated"
         };
       }
 
@@ -220,9 +217,8 @@ class PRChecklistBackground {
           usage: completion.usage
         }
       };
-
     } catch (error) {
-      console.error('PR description generation failed:', error);
+      console.error("PR description generation failed:", error);
       return {
         success: false,
         error: this.getErrorMessage(error)
@@ -259,7 +255,7 @@ Keep the description professional and concise.`;
 
 **Important:** 
 - Only return the filled-out template or structured description, not any meta-commentary
-- If there are checkboxes in the template (like "- [ ] Tests added"), keep them as-is
+- If there are checkboxes in the template (like "- [ ] Tests added"), check them off or say in the description why they were not applicable. You should air on the side of checking them off. 
 - Be specific about the changes based on the diff provided
 - If the diff shows test files, mention testing in your response`;
 
@@ -268,7 +264,7 @@ Keep the description professional and concise.`;
 
   private async getSettings(): Promise<Response> {
     try {
-      const result = await chrome.storage.sync.get(['openaiApiKey']);
+      const result = await chrome.storage.sync.get(["openaiApiKey"]);
       return {
         success: true,
         data: {
@@ -279,29 +275,29 @@ Keep the description professional and concise.`;
     } catch (error) {
       return {
         success: false,
-        error: 'Failed to load settings'
+        error: "Failed to load settings"
       };
     }
   }
 
   private getErrorMessage(error: any): string {
-    if (error?.error?.type === 'invalid_api_key') {
-      return 'Invalid API key. Please check your OpenAI API key.';
-    }
-    
-    if (error?.error?.type === 'insufficient_quota') {
-      return 'OpenAI API quota exceeded. Please check your billing.';
-    }
-    
-    if (error?.error?.type === 'rate_limit_exceeded') {
-      return 'Rate limit exceeded. Please try again in a moment.';
-    }
-    
-    if (error?.code === 'ENOTFOUND' || error?.code === 'ECONNREFUSED') {
-      return 'Network error. Please check your internet connection.';
+    if (error?.error?.type === "invalid_api_key") {
+      return "Invalid API key. Please check your OpenAI API key.";
     }
 
-    return error?.message || error?.error?.message || 'An unexpected error occurred';
+    if (error?.error?.type === "insufficient_quota") {
+      return "OpenAI API quota exceeded. Please check your billing.";
+    }
+
+    if (error?.error?.type === "rate_limit_exceeded") {
+      return "Rate limit exceeded. Please try again in a moment.";
+    }
+
+    if (error?.code === "ENOTFOUND" || error?.code === "ECONNREFUSED") {
+      return "Network error. Please check your internet connection.";
+    }
+
+    return error?.message || error?.error?.message || "An unexpected error occurred";
   }
 }
 
