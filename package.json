@@ -1,6 +1,6 @@
 {
   "name": "@ashapir0/pr-checklist-chrome-extension",
-  "version": "0.0.4",
+  "version": "0.0.5",
   "scripts": {
     "build": "webpack build",
     "build:w": "webpack build --watch",
