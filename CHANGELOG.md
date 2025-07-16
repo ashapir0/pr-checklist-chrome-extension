@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.4](https://github.com/ashapir0/pr-checklist-chrome-extension/compare/v0.0.3...v0.0.4) (2025-07-16)
+
+
+### Bug Fixes
+
+* remove s3 ([1c31f87](https://github.com/ashapir0/pr-checklist-chrome-extension/commit/1c31f87a54846a4ea4d7de816631ee5732cb9721))
+
 ### 0.0.3 (2025-07-16)
 
 
