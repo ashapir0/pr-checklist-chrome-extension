@@ -231,17 +231,70 @@ export const Application = () => {
             p: 2.5,
             display: "flex",
             alignItems: "center",
-            gap: 1.5,
+            justifyContent: "space-between",
             borderBottom: "1px solid",
             borderColor: "divider",
-            bgcolor: "grey.50",
+            background: "linear-gradient(135deg, rgba(139, 69, 244, 0.25) 0%, rgba(59, 130, 246, 0.25) 100%)",
+            bgcolor: "background.paper",
             minHeight: 72
           }}
         >
-          <img src="/images/icon/48.png" alt="PR Checklist Bot" style={{ width: 32, height: 32, borderRadius: 4 }} />
-          <Typography variant="h6" sx={{ fontWeight: 600, color: "text.primary" }}>
-            AI PR Assistant
-          </Typography>
+          <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+            {/* Logo */}
+            <Box
+              sx={{
+                width: 40,
+                height: 40,
+                borderRadius: "10px",
+                boxShadow: "0 4px 12px rgba(139, 92, 246, 0.25)",
+                overflow: "hidden",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center"
+              }}
+            >
+              <img
+                src="/images/icon/1024.png"
+                alt="Click'n'Ship Logo"
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  borderRadius: "10px"
+                }}
+              />
+            </Box>
+
+            {/* Title */}
+            <Typography
+              variant="h6"
+              sx={{
+                fontWeight: 700,
+                color: "#1876d2",
+                letterSpacing: "0.03em"
+              }}
+            >
+              Click'n'Ship
+            </Typography>
+          </Box>
+
+          {/* Beta Badge */}
+          <Box
+            sx={{
+              background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+              color: "white",
+              px: 1.5,
+              py: 0.4,
+              borderRadius: "12px",
+              fontSize: "11px",
+              fontWeight: 600,
+              textTransform: "uppercase",
+              letterSpacing: "0.3px",
+              boxShadow: "0 2px 8px rgba(16, 185, 129, 0.3)"
+            }}
+          >
+            Beta
+          </Box>
         </Box>
 
         <Tabs
@@ -469,8 +522,8 @@ export const Application = () => {
               How to Use:
             </Typography>
             <Typography variant="body2" color="text.secondary">
-              Navigate to a GitHub PR compare page and look for the "AI Auto-fill" button near the description field to
-              use the extension.
+              Navigate to a GitHub PR compare page and look for the floating "AI Auto-fill" button in the top-right
+              corner to automatically craft intelligent PR descriptions.
             </Typography>
           </Box>
 
