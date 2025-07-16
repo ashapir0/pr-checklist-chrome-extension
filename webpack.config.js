@@ -4,7 +4,8 @@ const CopyPlugin = require("copy-webpack-plugin");
 module.exports = {
   entry: {
     background: './src/background/index.ts',
-    client: './src/client/index.tsx'
+    client: './src/client/index.tsx',
+    content: './src/content/index.ts'
   },
   mode: "production",
   module: {

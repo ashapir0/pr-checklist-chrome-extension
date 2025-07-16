@@ -22,13 +22,22 @@
       "128": "/images/icon/128.png"
     }
   },
+  "content_scripts": [
+    {
+      "matches": ["https://github.com/*/compare/*", "https://github.com/*/pull/new/*"],
+      "js": ["dist/content.bundle.js"],
+      "run_at": "document_end"
+    }
+  ],
   "permissions": [
     "declarativeNetRequestWithHostAccess",
     "declarativeNetRequestFeedback",
     "cookies",
-    "storage"
+    "storage",
+    "activeTab"
   ],
   "host_permissions": [
-    "https://github.com/*"
+    "https://github.com/*",
+    "https://api.openai.com/*"
   ]
 }
