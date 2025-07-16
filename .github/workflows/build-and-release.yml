@@ -48,20 +48,3 @@ jobs:
           upload_url: ${{ steps.release.outputs.upload_url }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Bump S3 Version
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.S3_AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.S3_AWS_SECRET_ACCESS_KEY }}
-          AWS_DEFAULT_REGION: ${{ secrets.S3_AWS_REGION }}
-        run: |
-          BUILD_TIME_EPOCH=$(date +%s)
-          
-          RELEASE_JSON=$(jq -n \
-          --arg ver "${{ steps.version.outputs.current-version }}" \
-          --arg sha "${{ github.sha }}" \
-          --arg dl "${{ steps.upload.outputs.browser_download_url }}" \
-          --arg bt ${BUILD_TIME_EPOCH} \
-          '{version: $ver, sha: $sha, download: $dl, buildTimestamp: $bt }')
-          
-          echo $RELEASE_JSON > release.json          
-          aws s3 cp release.json s3://${{ secrets.S3_AWS_PATH }}/release.json
