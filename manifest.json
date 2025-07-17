@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "PR Checklist Bot",
   "description": "Automatically fills out PR checklist items based on the content of the PR.",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "incognito": "spanning",
   "minimum_chrome_version": "93",
   "icons": {

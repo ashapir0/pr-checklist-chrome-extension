@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+### [0.0.6](https://github.com/ashapir0/pr-checklist-chrome-extension/compare/v0.0.5...v0.0.6) (2025-07-17)
+
+
+### Bug Fixes
+
+* adjust prompt ([437a32d](https://github.com/ashapir0/pr-checklist-chrome-extension/commit/437a32d8951e996dc479351da9c549f2dbe8030c))
+
 ### [0.0.5](https://github.com/ashapir0/pr-checklist-chrome-extension/compare/v0.0.4...v0.0.5) (2025-07-16)
 
 
