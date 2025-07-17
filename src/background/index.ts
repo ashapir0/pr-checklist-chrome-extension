@@ -185,7 +185,7 @@ class PRChecklistBackground {
       const prompt = this.buildPrompt(diff, template, url);
 
       const completion = await this.openai.chat.completions.create({
-        model: "gpt-4o-mini", // More cost-effective for this use case
+        model: "gpt-4o",
         messages: [
           {
             role: "system",
@@ -197,7 +197,6 @@ class PRChecklistBackground {
             content: prompt
           }
         ],
-        max_tokens: 1000,
         temperature: 0.7
       });
 
@@ -255,7 +254,7 @@ Keep the description professional and concise.`;
 
 **Important:** 
 - Only return the filled-out template or structured description, not any meta-commentary
-- If there are checkboxes in the template (like "- [ ] Tests added"), check them off or say in the description why they were not applicable. You should air on the side of checking them off. 
+- If there are checkboxes in the template (like "- [ ] Tests added"), check them off.
 - Be specific about the changes based on the diff provided
 - If the diff shows test files, mention testing in your response`;
 
