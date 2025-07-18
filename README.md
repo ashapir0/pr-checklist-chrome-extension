@@ -5,7 +5,7 @@ A Chrome extension that automatically fills out GitHub PR descriptions using AI.
 ## Features
 
 - 🤖 **AI-Powered**: Uses OpenAI GPT to generate meaningful PR descriptions
-- 📝 **Template Aware**: Works with existing PR templates in your repositories  
+- 📝 **Template Aware**: Works with existing PR templates in your repositories
 - 🔍 **Smart Diff Analysis**: Analyzes actual code changes to create relevant descriptions
 - ⚙️ **Easy Setup**: Simple settings UI for API key management
 - 🚀 **One-Click Generation**: Adds a convenient button to GitHub PR pages
@@ -14,20 +14,23 @@ A Chrome extension that automatically fills out GitHub PR descriptions using AI.
 ## Setup
 
 ### 1. Get OpenAI API Key
+
 1. Visit [OpenAI Platform](https://platform.openai.com/api-keys)
 2. Create an account or sign in
 3. Generate a new API key (starts with `sk-`)
 4. Keep this key secure - you'll need it for the extension
 
 ### 2. Install Extension
+
 1. Clone this repository
 2. Run `npm install` to install dependencies
 3. Run `npm run build` to build the extension
 4. Open Chrome and go to `chrome://extensions/`
 5. Enable "Developer mode" (toggle in top right)
-6. Click "Load unpacked" and select the `dist` folder
+6. Click "Load unpacked" and select the top level folder (typically `pr-checklist-chrome-extension`)
 
 ### 3. Configure Extension
+
 1. Click the extension icon in your browser toolbar
 2. Go to the "⚙️ Settings" tab
 3. Enter your OpenAI API key
@@ -44,6 +47,7 @@ A Chrome extension that automatically fills out GitHub PR descriptions using AI.
 ## How It Works
 
 The extension:
+
 1. **Detects GitHub PR pages** using content scripts
 2. **Extracts diff data** from the GitHub interface
 3. **Reads any PR template** already in the description field
@@ -64,10 +68,12 @@ The extension:
 ## Development
 
 ### Commands
+
 - `npm run build` - Build for production
 - `npm run build:w` - Build with watch mode for development
 
 ### Testing
+
 1. Make code changes
 2. Run `npm run build`
 3. Reload the extension in Chrome
@@ -84,16 +90,19 @@ The extension:
 ## Troubleshooting
 
 ### Extension not appearing on GitHub
+
 - Ensure you're on a GitHub compare page (`/compare/` or `/pull/new`)
 - Check that the extension is enabled in Chrome
 - Refresh the page and wait a moment for the button to appear
 
 ### API key errors
+
 - Verify your key starts with `sk-`
 - Check your OpenAI account has available credits
 - Try generating a new API key
 
 ### No diff data extracted
+
 - Ensure the GitHub page has visible changes
 - Try refreshing the page
 - Check browser console for error messages
@@ -101,6 +110,7 @@ The extension:
 ## Cost Estimation
 
 The extension uses OpenAI's GPT-4o-mini model, which is cost-effective:
+
 - ~$0.001-0.01 per PR description (varies by diff size)
 - Typical usage: $1-5 per month for regular development
 
@@ -118,4 +128,4 @@ MIT License - see LICENSE file for details
 
 ## Support
 
-For issues or feature requests, please open a GitHub issue. 
+For issues or feature requests, please open a GitHub issue.
